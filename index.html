@@ -1,0 +1,1143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="icon" href="logo_itb.png" type="image/png">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LSKK Room - Viewer</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            overflow: hidden;
+        }
+
+        /* Login Styles */
+        .login-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .login-card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(10px);
+            max-width: 400px;
+            width: 100%;
+            animation: slideIn 0.5s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .login-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .login-header h1 {
+            color: #667eea;
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            font-weight: 300;
+        }
+
+        .login-header p {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 500;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid rgba(102, 126, 234, 0.2);
+            border-radius: 10px;
+            font-size: 14px;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .login-btn {
+            width: 100%;
+            padding: 15px;
+            font-size: 16px;
+            margin-top: 10px;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .login-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .login-error {
+            background: #ffebee;
+            color: #c62828;
+            padding: 10px;
+            border-radius: 8px;
+            margin: 15px 0;
+            display: none;
+            font-size: 14px;
+            border: 1px solid #ffcdd2;
+        }
+
+        .demo-credentials {
+            text-align: center;
+            margin-top: 20px;
+            padding: 15px;
+            background: rgba(102, 126, 234, 0.1);
+            border-radius: 10px;
+            color: #666;
+        }
+
+        .demo-credentials strong {
+            color: #667eea;
+        }
+
+        /* Main Display Styles */
+        .display-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 30px;
+            backdrop-filter: blur(15px);
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+            height: calc(100vh - 40px);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .header {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            padding: 40px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            animation: shimmer 3s ease-in-out infinite alternate;
+        }
+
+        @keyframes shimmer {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(180deg); }
+        }
+
+        .header h1 {
+            font-size: 3.5rem;
+            margin-bottom: 15px;
+            font-weight: 300;
+            position: relative;
+            z-index: 1;
+        }
+
+        .current-date {
+            font-size: 1.8rem;
+            font-weight: 400;
+            opacity: 0.9;
+            position: relative;
+            z-index: 1;
+            margin-bottom: 15px;
+        }
+
+        .current-time {
+            font-size: 1.2rem;
+            opacity: 0.8;
+            margin-bottom: 25px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .date-navigation {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            position: relative;
+            z-index: 1;
+            flex-wrap: wrap;
+        }
+
+        .nav-btn {
+            background: rgba(255, 255, 255, 0.15);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            padding: 12px 20px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            min-width: 130px;
+            justify-content: center;
+        }
+
+        .nav-btn:hover {
+            background: rgba(255, 255, 255, 0.25);
+            border-color: rgba(255, 255, 255, 0.5);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .nav-btn:active {
+            transform: translateY(0);
+        }
+
+        .today-btn {
+            background: rgba(255, 255, 255, 0.9);
+            color: #667eea;
+            border-color: rgba(255, 255, 255, 0.9);
+            font-weight: 600;
+        }
+
+        .today-btn:hover {
+            background: white;
+            color: #764ba2;
+        }
+
+        .logout-btn {
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            min-width: auto;
+        }
+
+        .logout-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            border-color: rgba(255, 255, 255, 0.5);
+            transform: translateY(-1px);
+        }
+
+        .nav-icon {
+            font-size: 16px;
+        }
+
+        .nav-text {
+            font-size: 13px;
+        }
+
+        .content {
+            flex: 1;
+            padding: 40px;
+            overflow-y: auto;
+        }
+
+        .schedule-grid {
+            display: grid;
+            gap: 20px;
+            animation: fadeInUp 0.8s ease-out;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .time-slot {
+            display: grid;
+            grid-template-columns: 120px 1fr;
+            gap: 30px;
+            padding: 25px 0;
+            border-bottom: 2px solid rgba(102, 126, 234, 0.1);
+            align-items: start;
+            transition: all 0.3s ease;
+        }
+
+        .time-slot:hover {
+            background: rgba(102, 126, 234, 0.03);
+            border-radius: 15px;
+            padding: 25px 20px;
+        }
+
+        .time {
+            font-weight: 700;
+            color: #667eea;
+            font-size: 1.4rem;
+            text-align: right;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .event {
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.08), rgba(118, 75, 162, 0.08));
+            border-left: 6px solid #667eea;
+            padding: 25px 30px;
+            border-radius: 15px;
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+        }
+
+        .event::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.6s ease;
+        }
+
+        .event:hover::before {
+            left: 100%;
+        }
+
+        .event:hover {
+            transform: translateX(10px);
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.2);
+        }
+
+        .event-title {
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 8px;
+            font-size: 1.3rem;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+            line-height: 1.4;
+        }
+
+        .event-description {
+            color: #666;
+            font-size: 1rem;
+            line-height: 1.5;
+        }
+
+        .no-events {
+            text-align: center;
+            padding: 80px 40px;
+            background: rgba(102, 126, 234, 0.05);
+            border-radius: 20px;
+            margin: 40px 0;
+            animation: pulse 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 0.6; }
+            100% { opacity: 1; }
+        }
+
+        .no-events-icon {
+            font-size: 4rem;
+            margin-bottom: 20px;
+            opacity: 0.7;
+        }
+
+        .no-events-text {
+            color: #999;
+            font-size: 1.5rem;
+            font-weight: 300;
+        }
+
+        .status-bar {
+            background: rgba(102, 126, 234, 0.05);
+            padding: 15px 40px;
+            border-top: 1px solid rgba(102, 126, 234, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        .status-indicator {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            background: #4CAF50;
+            border-radius: 50%;
+            animation: pulse-dot 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse-dot {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+
+        .auto-refresh {
+            font-style: italic;
+        }
+
+        /* Additional styles for time display and active events */
+        .time {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 5px;
+        }
+        
+        .time-range {
+            font-weight: 700;
+            color: #667eea;
+            font-size: 1.2rem;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .duration {
+            font-size: 0.8rem;
+            color: #999;
+            background: rgba(102, 126, 234, 0.1);
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-weight: 500;
+        }
+        
+        .active-event {
+            background: linear-gradient(135deg, rgba(76, 175, 80, 0.15), rgba(139, 195, 74, 0.15)) !important;
+            border-left-color: #4CAF50 !important;
+            box-shadow: 0 0 25px rgba(76, 175, 80, 0.4);
+            animation: pulse-active 2s ease-in-out infinite alternate;
+        }
+        
+        @keyframes pulse-active {
+            0% { box-shadow: 0 0 25px rgba(76, 175, 80, 0.4); }
+            100% { box-shadow: 0 0 35px rgba(76, 175, 80, 0.6); }
+        }
+        
+        .live-indicator {
+            background: #f44336;
+            color: white;
+            font-size: 0.7rem;
+            padding: 2px 6px;
+            border-radius: 10px;
+            margin-left: 10px;
+            animation: blink 1s infinite;
+        }
+        
+        @keyframes blink {
+            0%, 50% { opacity: 1; }
+            51%, 100% { opacity: 0.5; }
+        }
+        
+        .current-event {
+            background: linear-gradient(135deg, rgba(76, 175, 80, 0.1), rgba(139, 195, 74, 0.1)) !important;
+            border-left-color: #4CAF50 !important;
+            box-shadow: 0 0 20px rgba(76, 175, 80, 0.3);
+        }
+        
+        .event-description {
+            color: #666 !important;
+            font-size: 1rem !important;
+            line-height: 1.5 !important;
+            word-wrap: break-word !important;
+            white-space: pre-wrap !important;
+            overflow-wrap: break-word !important;
+            hyphens: auto !important;
+            margin-top: 8px !important;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2.5rem;
+            }
+
+            .current-date {
+                font-size: 1.4rem;
+            }
+
+            .time-slot {
+                grid-template-columns: 80px 1fr;
+                gap: 20px;
+            }
+
+            .time {
+                font-size: 1.1rem;
+            }
+
+            .event-title {
+                font-size: 1.1rem;
+            }
+
+            .content {
+                padding: 20px;
+            }
+
+            .time-range {
+                font-size: 1rem;
+            }
+            
+            .time {
+                align-items: center;
+            }
+            
+            .event-description {
+                font-size: 0.9rem !important;
+            }
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            75% { transform: translateX(10px); }
+        }
+    </style>
+</head>
+<body>
+    <!-- Login Screen -->
+    <div class="login-container" id="loginContainer">
+        <div class="login-card">
+            <div class="login-header">
+                <h1>🗓️ LSKK Room</h1>
+                <p>Please enter your credentials to view the schedule</p>
+            </div>
+            <form id="loginForm">
+                <div class="form-group">
+                    <label for="username">Username</label>
+                    <input type="text" id="username" value="viewer" required placeholder="Enter username">
+                </div>
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" required placeholder="Enter password">
+                </div>
+                <div class="login-error" id="loginError"></div>
+                <button type="submit" class="login-btn">Login</button>
+            </form>
+            <div class="demo-credentials">
+                <small>© 2025 by PotatoCodex</small>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Display -->
+    <div class="display-container" id="displayContainer" style="display: none;">
+        <div class="header">
+            <h1>🗓️ Jadwal Penggunaan Ruang LSKK</h1>
+            <div class="current-date" id="currentDate"></div>
+            <div class="current-time" id="currentTime"></div>
+            
+            <!-- Navigation Controls -->
+            <div class="date-navigation">
+                <button class="nav-btn" onclick="changeDate(-1)" id="prevBtn">
+                    <span class="nav-icon">←</span>
+                    <span class="nav-text">Previous Day</span>
+                </button>
+                <button class="nav-btn today-btn" onclick="goToToday()" id="todayBtn">
+                    <span class="nav-icon">📍</span>
+                    <span class="nav-text">Today</span>
+                </button>
+                <button class="nav-btn" onclick="changeDate(1)" id="nextBtn">
+                    <span class="nav-text">Next Day</span>
+                    <span class="nav-icon">→</span>
+                </button>
+                <button class="logout-btn" onclick="logout()">
+                    <span>🚪</span>
+                    <span>Logout</span>
+                </button>
+            </div>
+        </div>
+
+        <div class="content">
+            <div class="schedule-grid" id="scheduleGrid"></div>
+        </div>
+
+        <div class="status-bar">
+            <div class="status-indicator">
+                <div class="status-dot"></div>
+                <span>Live Display © 2025 by PotatoCodex</span>
+            </div>
+            <div class="auto-refresh">Auto-refreshing every 30 seconds</div>
+        </div>
+    </div>
+
+    <script>
+        // Authentication system
+        const VIEWER_CREDENTIALS = {
+            'viewer': 'lskk123',
+            'guest': 'guest123',
+            'user': 'user123'
+        };
+
+        let isAuthenticated = false;
+
+        // Global variables
+        let scheduleData = {};
+        let currentDate = new Date();
+        
+        // API Configuration - CHANGE THIS TO YOUR SERVER URL
+        const API_URL = 'https://lskkroom.potatocodex.com/api.php'; // Change to your server path
+
+        // Authentication functions
+        function checkAuth() {
+            const sessionAuth = sessionStorage.getItem('viewerAuth');
+            if (sessionAuth === 'authenticated') {
+                isAuthenticated = true;
+                showDisplay();
+            } else {
+                showLogin();
+            }
+        }
+
+        function showLogin() {
+            document.getElementById('loginContainer').style.display = 'flex';
+            document.getElementById('displayContainer').style.display = 'none';
+        }
+
+        function showDisplay() {
+            document.getElementById('loginContainer').style.display = 'none';
+            document.getElementById('displayContainer').style.display = 'block';
+            
+            // Initialize display after showing it
+            setTimeout(() => {
+                init();
+            }, 100);
+        }
+
+        function logout() {
+            if (confirm('Are you sure you want to logout?')) {
+                isAuthenticated = false;
+                sessionStorage.removeItem('viewerAuth');
+                sessionStorage.removeItem('viewerUser');
+                
+                // Reset to login screen
+                showLogin();
+                
+                // Clear any form data
+                document.getElementById('loginForm').reset();
+                
+                // Show logout success message briefly
+                setTimeout(() => {
+                    const loginError = document.getElementById('loginError');
+                    loginError.style.background = '#d4edda';
+                    loginError.style.color = '#155724';
+                    loginError.style.borderColor = '#c3e6cb';
+                    loginError.textContent = 'Successfully logged out';
+                    loginError.style.display = 'block';
+                    
+                    setTimeout(() => {
+                        loginError.style.display = 'none';
+                        loginError.style.background = '#ffebee';
+                        loginError.style.color = '#c62828';
+                        loginError.style.borderColor = '#ffcdd2';
+                    }, 3000);
+                }, 100);
+            }
+        }
+
+        // Handle login form submission
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const username = document.getElementById('username').value.trim();
+            const password = document.getElementById('password').value;
+            const errorEl = document.getElementById('loginError');
+            
+            // Validate credentials
+            if (VIEWER_CREDENTIALS[username] && VIEWER_CREDENTIALS[username] === password) {
+                // Successful login
+                isAuthenticated = true;
+                sessionStorage.setItem('viewerAuth', 'authenticated');
+                sessionStorage.setItem('viewerUser', username);
+                
+                // Clear form and error
+                document.getElementById('loginForm').reset();
+                errorEl.style.display = 'none';
+                
+                // Show display
+                showDisplay();
+            } else {
+                // Failed login
+                errorEl.textContent = 'Invalid username or password. Please try again.';
+                errorEl.style.display = 'block';
+                
+                // Clear password field
+                document.getElementById('password').value = '';
+                
+                // Add shake animation
+                const loginCard = document.querySelector('.login-card');
+                loginCard.style.animation = 'shake 0.5s ease-in-out';
+                setTimeout(() => {
+                    loginCard.style.animation = 'slideIn 0.5s ease-out';
+                }, 500);
+            }
+        });
+
+        // API Helper functions
+        async function apiRequest(endpoint, options = {}) {
+            try {
+                console.log('Making API request to:', `${API_URL}${endpoint}`);
+                const response = await fetch(`${API_URL}${endpoint}`, {
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    ...options
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                const data = await response.json();
+                console.log('API response:', data);
+                return data;
+            } catch (error) {
+                console.error('API request failed:', error);
+                throw error;
+            }
+        }
+
+        // Load all schedule data from server
+        async function loadScheduleData() {
+            try {
+                console.log('Loading schedule data from server...');
+                const data = await apiRequest('');
+                console.log('Raw server response:', data);
+                
+                // Handle different response formats
+                if (data && typeof data === 'object') {
+                    scheduleData = data;
+                    console.log('Schedule data loaded successfully:', scheduleData);
+                } else {
+                    console.log('No data received from server, keeping empty scheduleData');
+                    scheduleData = {};
+                }
+                
+                return scheduleData;
+            } catch (error) {
+                console.error('Failed to load schedule data from server:', error);
+                console.log('Will show empty schedule or "no events" message');
+                scheduleData = {};
+                throw error;
+            }
+        }
+
+        // Load specific date from server
+        async function loadDateData(date) {
+            try {
+                console.log('Loading data for date:', date);
+                const data = await apiRequest(`?date=${date}`);
+                console.log('Received date data:', data);
+                if (data.events) {
+                    scheduleData[date] = data.events;
+                }
+                return data.events || [];
+            } catch (error) {
+                console.error('Error loading date data:', error);
+                return scheduleData[date] || [];
+            }
+        }
+
+        // Make functions global so onclick can access them
+        window.changeDate = async function(days) {
+            console.log('Changing date by', days, 'days');
+            currentDate.setDate(currentDate.getDate() + days);
+            console.log('New date:', currentDate);
+            window.updateCurrentDateDisplay();
+            
+            // Load data for the new date if not already loaded
+            const dateKey = formatDate(currentDate);
+            if (!scheduleData[dateKey]) {
+                await loadDateData(dateKey);
+            }
+            
+            window.renderSchedule();
+        };
+
+        window.goToToday = async function() {
+            console.log('Going to today');
+            const today = new Date();
+            const isToday = formatDate(currentDate) === formatDate(today);
+            
+            // Only change if not already viewing today
+            currentDate = new Date();
+            window.updateCurrentDateDisplay();
+            
+            // Load today's data if not already loaded
+            const dateKey = formatDate(currentDate);
+            if (!scheduleData[dateKey]) {
+                await loadDateData(dateKey);
+            }
+            
+            window.renderSchedule();
+        };
+
+        // Format date as YYYY-MM-DD
+        function formatDate(date) {
+            return date.toISOString().split('T')[0];
+        }
+
+        // Format date for display
+        function formatDisplayDate(date) {
+            return date.toLocaleDateString('en-US', {
+                weekday: 'long',
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            });
+        }
+
+        // Format time for display
+        function formatTime(timeString) {
+            const [hours, minutes] = timeString.split(':');
+            const hour = parseInt(hours);
+            const ampm = hour >= 12 ? 'PM' : 'AM';
+            const displayHour = hour % 12 || 12;
+            return `${displayHour}:${minutes} ${ampm}`;
+        }
+
+        // Format time range for display
+        function formatTimeRange(timeStart, timeStop) {
+            return `${formatTime(timeStart)} - ${formatTime(timeStop)}`;
+        }
+
+        // Calculate duration in minutes
+        function calculateDuration(timeStart, timeStop) {
+            const start = new Date(`1970-01-01T${timeStart}:00`);
+            const stop = new Date(`1970-01-01T${timeStop}:00`);
+            const diffMs = stop - start;
+            const diffMins = Math.floor(diffMs / (1000 * 60));
+            
+            if (diffMins < 60) {
+                return `${diffMins}min`;
+            } else {
+                const hours = Math.floor(diffMins / 60);
+                const mins = diffMins % 60;
+                return mins > 0 ? `${hours}h ${mins}m` : `${hours}h`;
+            }
+        }
+
+        // Check if event is currently active
+        function isEventActive(timeStart, timeStop) {
+            const now = new Date();
+            const currentTimeStr = now.getHours().toString().padStart(2, '0') + ':' + now.getMinutes().toString().padStart(2, '0');
+            return currentTimeStr >= timeStart && currentTimeStr <= timeStop;
+        }
+
+        // Get current time string
+        function getCurrentTime() {
+            return new Date().toLocaleTimeString('en-US', {
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit'
+            });
+        }
+
+        // Update current date and time display
+        function updateDateTime() {
+            window.updateCurrentDateDisplay();
+            document.getElementById('currentTime').textContent = getCurrentTime();
+        }
+
+        // Update current date display (make global)
+        window.updateCurrentDateDisplay = function() {
+            const displayDate = formatDisplayDate(currentDate);
+            const today = new Date();
+            const isToday = formatDate(currentDate) === formatDate(today);
+            
+            // Update the title based on the selected date
+            const headerTitle = document.querySelector('.header h1');
+            headerTitle.textContent = '🗓️ Jadwal Penggunaan Ruang LSKK';
+            
+            document.getElementById('currentDate').textContent = displayDate;
+            
+            // Update today button visibility
+            const todayBtn = document.getElementById('todayBtn');
+            if (isToday) {
+                todayBtn.style.opacity = '0.6';
+                todayBtn.style.cursor = 'default';
+            } else {
+                todayBtn.style.opacity = '1';
+                todayBtn.style.cursor = 'pointer';
+            }
+        };
+
+        // Render schedule for current date (make global)
+        window.renderSchedule = function() {
+            const dateKey = formatDate(currentDate);
+            const events = scheduleData[dateKey] || [];
+            const scheduleGrid = document.getElementById('scheduleGrid');
+
+            console.log(`Rendering schedule for ${dateKey}, found ${events.length} events:`, events);
+
+            if (events.length === 0) {
+                const today = new Date();
+                const isToday = formatDate(currentDate) === formatDate(today);
+                const isPast = currentDate < today;
+                const isFuture = currentDate > today;
+                
+                let message = 'No events scheduled for this day';
+                let icon = '🗓️';
+                
+                if (isPast) {
+                    message = 'No events were scheduled for this day';
+                    icon = '📋';
+                } else if (isFuture) {
+                    message = 'No events planned for this day yet';
+                    icon = '📅';
+                }
+                
+                scheduleGrid.innerHTML = `
+                    <div class="no-events">
+                        <div class="no-events-icon">${icon}</div>
+                        <div class="no-events-text">${message}</div>
+                        <div style="margin-top: 10px; font-size: 0.8rem; color: #999;">
+                            ${Object.keys(scheduleData).length > 0 ? 
+                                `Loaded ${Object.keys(scheduleData).length} date(s) from server` : 
+                                'No data loaded from server'}
+                        </div>
+                    </div>
+                `;
+                return;
+            }
+
+            // Sort events by start time
+            events.sort((a, b) => a.timeStart.localeCompare(b.timeStart));
+
+            // Get current time to highlight current/active events (only for today)
+            const today = new Date();
+            const isToday = formatDate(currentDate) === formatDate(today);
+            const currentTimeStr = today.getHours().toString().padStart(2, '0') + ':' + today.getMinutes().toString().padStart(2, '0');
+
+            let html = '';
+            events.forEach((event, index) => {
+                const isActive = isToday && isEventActive(event.timeStart, event.timeStop);
+                const duration = calculateDuration(event.timeStart, event.timeStop);
+                
+                html += `
+                    <div class="time-slot" style="animation-delay: ${index * 0.1}s">
+                        <div class="time">
+                            <div class="time-range">${formatTimeRange(event.timeStart, event.timeStop)}</div>
+                            <div class="duration">${duration}</div>
+                        </div>
+                        <div class="event ${isActive ? 'active-event' : ''}">
+                            <div class="event-title">
+                                ${event.title}
+                                ${isActive ? '<span class="live-indicator">🔴 LIVE</span>' : ''}
+                            </div>
+                            ${event.description ? `<div class="event-description">${event.description}</div>` : ''}
+                        </div>
+                    </div>
+                `;
+            });
+
+            scheduleGrid.innerHTML = html;
+        };
+
+        // Refresh data from database
+        async function refreshData() {
+            try {
+                await loadScheduleData();
+                renderSchedule();
+            } catch (error) {
+                console.error('Error refreshing data:', error);
+            }
+        }
+
+        // Test API function for debugging
+        window.testAPI = async function() {
+            console.clear(); // Clear console for easier reading
+            console.log('=== API TEST START ===');
+            console.log('Current API_URL:', API_URL);
+            console.log('Testing basic fetch...');
+            
+            try {
+                // Test 1: Basic fetch
+                console.log('Attempting fetch to:', API_URL);
+                const response = await fetch(API_URL, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    }
+                });
+                
+                console.log('✅ Fetch successful!');
+                console.log('Response status:', response.status);
+                console.log('Response ok:', response.ok);
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+                
+                // Test 2: Get response text
+                const responseText = await response.text();
+                console.log('Raw response text:', responseText);
+                
+                // Test 3: Try to parse JSON
+                if (responseText.trim()) {
+                    try {
+                        const jsonData = JSON.parse(responseText);
+                        console.log('✅ JSON parsing successful!');
+                        console.log('Parsed data:', jsonData);
+                        
+                        // Test 4: Check data structure
+                        if (typeof jsonData === 'object') {
+                            console.log('✅ Data is an object');
+                            console.log('Number of dates in data:', Object.keys(jsonData).length);
+                            Object.keys(jsonData).forEach(date => {
+                                console.log(`Date ${date}: ${jsonData[date].length} events`);
+                            });
+                        } else {
+                            console.log('⚠️ Data is not an object:', typeof jsonData);
+                        }
+                        
+                    } catch (parseError) {
+                        console.error('❌ JSON parsing failed:', parseError);
+                        console.log('Response might not be valid JSON');
+                    }
+                } else {
+                    console.log('⚠️ Empty response received');
+                }
+                
+            } catch (fetchError) {
+                console.error('❌ Fetch failed:', fetchError);
+                console.log('Common causes:');
+                console.log('- API file does not exist at the specified path');
+                console.log('- CORS policy blocking the request');
+                console.log('- Server is not running or accessible');
+                console.log('- Wrong API_URL in the code');
+            }
+            
+            console.log('=== API TEST END ===');
+            
+            // Now test the actual loadScheduleData function
+            console.log('\n=== TESTING loadScheduleData() ===');
+            try {
+                await loadScheduleData();
+                console.log('Current scheduleData after load:', scheduleData);
+            } catch (error) {
+                console.error('loadScheduleData failed:', error);
+            }
+        };
+
+        // Initialize the display
+        async function init() {
+            try {
+                console.log('Initialize the display');
+                updateDateTime();
+                renderSchedule();
+                goToToday();
+                
+                // Update time every second
+                setInterval(updateDateTime, 1000);
+                
+                // Refresh data from database every 30 seconds
+                setInterval(refreshData, 30000);
+                
+                // Auto-advance to next day at midnight
+                setInterval(() => {
+                    const now = new Date();
+                    if (now.getHours() === 0 && now.getMinutes() === 0 && now.getSeconds() === 0) {
+                        currentDate = new Date();
+                        refreshData();
+                    }
+                }, 1000);
+            } catch (error) {
+                console.error('Error initializing app:', error);
+                // Fallback to memory-only mode
+                const today = formatDate(new Date());
+                scheduleData[today] = [
+                    { timeStart: '08:00', timeStop: '10:00', title: 'Welcome Breakfast', description: 'Continental breakfast available' },
+                    { timeStart: '12:30', timeStop: '14:00', title: 'Lunch Service', description: 'Buffet lunch service' },
+                    { timeStart: '18:00', timeStop: '21:00', title: 'Dinner Service', description: 'À la carte dinner service' }
+                ];
+                updateDateTime();
+                renderSchedule();
+                setInterval(updateDateTime, 1000);
+            }
+        }
+
+        // Auto-logout after 60 minutes of inactivity (longer than admin for viewers)
+        let inactivityTimer;
+        
+        function resetInactivityTimer() {
+            clearTimeout(inactivityTimer);
+            if (isAuthenticated) {
+                inactivityTimer = setTimeout(() => {
+                    alert('Session expired due to inactivity. Please login again.');
+                    logout();
+                }, 60 * 60 * 1000); // 60 minutes
+            }
+        }
+
+        // Add event listeners for user activity
+        ['mousedown', 'mousemove', 'keypress', 'scroll', 'touchstart'].forEach(event => {
+            document.addEventListener(event, resetInactivityTimer, true);
+        });
+
+        // Initialize the app on page load
+        checkAuth();
+    </script>
+</body>
+</html>

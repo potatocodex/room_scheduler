@@ -1,0 +1,1169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="icon" href="logo_itb.png" type="image/png">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LSKK Room - Admin</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #2c3e50 0%, #3498db 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        /* Login Styles */
+        .login-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .login-card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(10px);
+            max-width: 400px;
+            width: 100%;
+            animation: slideIn 0.5s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .login-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .login-header h1 {
+            color: #2c3e50;
+            font-size: 2rem;
+            margin-bottom: 10px;
+            font-weight: 300;
+        }
+
+        .login-header p {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .login-btn {
+            width: 100%;
+            padding: 15px;
+            font-size: 16px;
+            margin-top: 10px;
+        }
+
+        .login-error {
+            background: #ffebee;
+            color: #c62828;
+            padding: 10px;
+            border-radius: 8px;
+            margin: 15px 0;
+            display: none;
+            font-size: 14px;
+            border: 1px solid #ffcdd2;
+        }
+
+        .demo-credentials {
+            text-align: center;
+            margin-top: 20px;
+            padding: 15px;
+            background: rgba(52, 152, 219, 0.1);
+            border-radius: 10px;
+            color: #666;
+        }
+
+        .demo-credentials strong {
+            color: #2c3e50;
+        }
+
+        /* Admin Panel Styles */
+        .admin-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(45deg, #2c3e50, #3498db);
+            color: white;
+            padding: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin: 0;
+            font-weight: 300;
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .admin-badge {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .logout-btn {
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .logout-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            border-color: rgba(255, 255, 255, 0.5);
+            transform: translateY(-1px);
+        }
+
+        .controls {
+            padding: 30px;
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            align-items: center;
+            background: rgba(52, 152, 219, 0.05);
+            border-bottom: 1px solid rgba(52, 152, 219, 0.1);
+        }
+
+        .date-nav {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(45deg, #2c3e50, #3498db);
+            color: white;
+            box-shadow: 0 4px 15px rgba(52, 152, 219, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(52, 152, 219, 0.4);
+        }
+
+        .btn-secondary {
+            background: rgba(52, 152, 219, 0.1);
+            color: #3498db;
+            border: 2px solid rgba(52, 152, 219, 0.2);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(52, 152, 219, 0.2);
+            transform: translateY(-1px);
+        }
+
+        .btn-danger {
+            background: linear-gradient(45deg, #e74c3c, #c0392b);
+            color: white;
+        }
+
+        .btn-danger:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 15px rgba(231, 76, 60, 0.3);
+        }
+
+        .btn-small {
+            padding: 6px 12px;
+            font-size: 12px;
+            border-radius: 15px;
+        }
+
+        .current-date {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #333;
+            margin: 0 20px;
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 400px;
+            gap: 30px;
+            padding: 30px;
+        }
+
+        .schedule-section {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid rgba(52, 152, 219, 0.2);
+        }
+
+        .schedule-grid {
+            display: grid;
+            gap: 15px;
+            max-height: 600px;
+            overflow-y: auto;
+        }
+
+        .time-slot {
+            display: grid;
+            grid-template-columns: 120px 1fr auto;
+            gap: 15px;
+            padding: 15px;
+            border: 2px solid rgba(52, 152, 219, 0.1);
+            border-radius: 10px;
+            align-items: center;
+            transition: all 0.3s ease;
+        }
+
+        .time-slot:hover {
+            border-color: rgba(52, 152, 219, 0.3);
+            background: rgba(52, 152, 219, 0.02);
+        }
+
+        .time {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .time-range {
+            font-weight: 600;
+            color: #3498db;
+            font-size: 0.9rem;
+        }
+
+        .duration {
+            font-size: 0.75rem;
+            color: #999;
+            background: rgba(52, 152, 219, 0.1);
+            padding: 2px 6px;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .event-info {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+        }
+
+        .event-title {
+            font-weight: 600;
+            color: #333;
+            line-height: 1.3;
+        }
+
+        .event-description {
+            color: #666;
+            font-size: 0.9rem;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+            line-height: 1.4;
+            margin-top: 5px;
+        }
+
+        .event-actions {
+            display: flex;
+            gap: 5px;
+        }
+
+        .no-events {
+            text-align: center;
+            padding: 40px;
+            color: #999;
+            font-style: italic;
+            background: rgba(52, 152, 219, 0.05);
+            border-radius: 10px;
+            border: 2px dashed rgba(52, 152, 219, 0.2);
+        }
+
+        .sidebar {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+            height: fit-content;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 500;
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid rgba(52, 152, 219, 0.2);
+            border-radius: 10px;
+            font-size: 14px;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #3498db;
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .bulk-actions {
+            background: rgba(52, 152, 219, 0.05);
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+        }
+
+        .bulk-actions h3 {
+            margin-bottom: 15px;
+            color: #2c3e50;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, rgba(52, 152, 219, 0.1), rgba(44, 62, 80, 0.1));
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #2c3e50;
+        }
+
+        .stat-label {
+            font-size: 0.8rem;
+            color: #666;
+            margin-top: 5px;
+        }
+
+        .success-message {
+            background: #d4edda;
+            color: #155724;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border: 1px solid #c3e6cb;
+            display: none;
+        }
+
+        .db-status {
+            background: rgba(76, 175, 80, 0.1);
+            color: #2e7d32;
+            padding: 10px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .db-status.error {
+            background: rgba(244, 67, 54, 0.1);
+            color: #c62828;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            75% { transform: translateX(10px); }
+        }
+
+        @media (max-width: 1024px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+            
+            .controls {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .date-nav {
+                justify-content: center;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .time-slot {
+                grid-template-columns: 1fr;
+                gap: 10px;
+            }
+
+            .event-actions {
+                justify-content: center;
+            }
+
+            .header {
+                flex-direction: column;
+                gap: 15px;
+                text-align: center;
+            }
+
+            .header-actions {
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .logout-btn {
+                font-size: 0.85rem;
+                padding: 6px 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Login Screen -->
+    <div class="login-container" id="loginContainer">
+        <div class="login-card">
+            <div class="login-header">
+                <h1>🔐 LSKK Admin</h1>
+                <p>Please enter your credentials to access the admin panel of LSKK Room Scheduler</p>
+            </div>
+            <form id="loginForm">
+                <div class="form-group">
+                    <label for="username">Username</label>
+                    <input type="text" id="username" required placeholder="Enter username">
+                </div>
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" required placeholder="Enter password">
+                </div>
+                <div class="login-error" id="loginError"></div>
+                <button type="submit" class="btn btn-primary login-btn">Login</button>
+            </form>
+            <div class="demo-credentials">
+                <small>© 2025 by PotatoCodex</small>
+            </div>
+        </div>
+    </div>
+
+    <!-- Admin Panel -->
+    <div class="admin-container" id="adminContainer" style="display: none;">
+        <div class="header">
+            <h1>🛠️ LSKK Room Scheduler Admin Panel</h1>
+            <div class="header-actions">
+                <div class="admin-badge">© 2025 by PotatoCodex</div>
+                <button class="logout-btn" onclick="logout()">
+                    <span>🚪</span>
+                    <span>Logout</span>
+                </button>
+            </div>
+        </div>
+
+        <div class="controls">
+            <div class="date-nav">
+                <button class="btn btn-secondary" onclick="changeDate(-1)">← Previous</button>
+                <div class="current-date" id="currentDate"></div>
+                <button class="btn btn-secondary" onclick="changeDate(1)">Next →</button>
+            </div>
+            <button class="btn btn-secondary" onclick="goToToday()">Today</button>
+            <button class="btn btn-primary" onclick="exportData()">📊 Export Data</button>
+            <button class="btn btn-danger" onclick="clearDay()">🗑️ Clear Day</button>
+        </div>
+
+        <div class="main-content">
+            <div class="schedule-section">
+                <div class="section-title">Schedule Management</div>
+                
+                <div class="db-status" id="dbStatus">
+                    <span>🟢</span>
+                    <span>Server connected - Changes saved globally</span>
+                </div>
+                
+                <div class="stats">
+                    <div class="stat-card">
+                        <div class="stat-number" id="eventCount">0</div>
+                        <div class="stat-label">Events Today</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="totalDays">0</div>
+                        <div class="stat-label">Total Days</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="totalEvents">0</div>
+                        <div class="stat-label">Total Events</div>
+                    </div>
+                </div>
+
+                <div class="success-message" id="successMessage"></div>
+                
+                <div class="schedule-grid" id="scheduleGrid"></div>
+            </div>
+
+            <div class="sidebar">
+                <div class="section-title">Add/Edit Event</div>
+                
+                <form id="eventForm">
+                    <div class="form-group">
+                        <label for="eventTitle">Room/Place *</label>
+                        <input type="text" id="eventTitle" required placeholder="Enter room/place information">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="eventTimeStart">Start Time *</label>
+                        <input type="time" id="eventTimeStart" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="eventTimeStop">End Time *</label>
+                        <input type="time" id="eventTimeStop" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="eventDescription">Description</label>
+                        <textarea id="eventDescription" rows="5" placeholder="Optional description"></textarea>
+                    </div>
+                    
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary" id="submitBtn">Add Event</button>
+                        <button type="button" class="btn btn-secondary" onclick="cancelEdit()" id="cancelBtn" style="display: none;">Cancel</button>
+                    </div>
+                </form>
+
+                <div class="bulk-actions">
+                    <h3>Quick Templates</h3>
+                    <button class="btn btn-secondary btn-small" onclick="addTemplate('pagi')">🍳 Morning</button>
+                    <button class="btn btn-secondary btn-small" onclick="addTemplate('siang')">🍽️ Before Lunch</button>
+                    <button class="btn btn-secondary btn-small" onclick="addTemplate('sore')">🍷 Afternoon</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Authentication system
+        const AUTH_CREDENTIALS = {
+            'admin': 'misa123',
+            'manager': 'schedule2024',
+            'staff': 'events123'
+        };
+
+        let isAuthenticated = false;
+
+        // Global variables for schedule system
+        let scheduleData = {};
+        let currentDate = new Date();
+        let editingEventIndex = -1;
+
+        // API Configuration - CHANGE THIS TO YOUR SERVER URL
+        const API_URL = 'https://lskkroom.potatocodex.com/api.php'; // Change to your server path like: 'https://lskkroom.potatocodex.com/api.php'
+
+        // Event templates
+        const templates = {
+            pagi: { title: 'Ruang Meeting X', description: 'Sidang X: an. X\nPembimbing: Dr. X\nPenguji 1: Dr. X\nPenguji 2: Dr. X', timeStart: '08:00', timeStop: '10:00' },
+            siang: { title: 'Ruang Meeting Y', description: 'Sidang Y: an. Y\nPembimbing: Dr. Y\nPenguji 1: Dr. Y\nPenguji 2: Dr. Y', timeStart: '10:00', timeStop: '12:00' },
+            sore: { title: 'Ruang Meeting Z', description: 'Sidang Z: an. Z\nPembimbing: Dr. Z\nPenguji 1: Dr. Z\nPenguji 2: Dr. Z', timeStart: '14:00', timeStop: '16:00' }
+        };
+
+        // API Helper functions
+        async function apiRequest(endpoint, options = {}) {
+            try {
+                const response = await fetch(`${API_URL}${endpoint}`, {
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    ...options
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                return await response.json();
+            } catch (error) {
+                console.error('API request failed:', error);
+                throw error;
+            }
+        }
+
+        // Load all schedule data from server
+        async function loadScheduleData() {
+            try {
+                const data = await apiRequest('');
+                scheduleData = data;
+                return scheduleData;
+            } catch (error) {
+                console.error('Error loading schedule data:', error);
+                updateDBStatus(false);
+                scheduleData = {};
+                return scheduleData;
+            }
+        }
+
+        // Save schedule data to server
+        async function saveScheduleData(date, events) {
+            try {
+                const response = await apiRequest('', {
+                    method: 'POST',
+                    body: JSON.stringify({ date: date, events: events })
+                });
+                
+                if (response.success) {
+                    updateDBStatus(true);
+                    return true;
+                } else {
+                    throw new Error(response.error || 'Failed to save');
+                }
+            } catch (error) {
+                console.error('Error saving schedule data:', error);
+                updateDBStatus(false);
+                throw error;
+            }
+        }
+
+        // Delete schedule data from server
+        async function deleteScheduleData(date) {
+            try {
+                const response = await apiRequest(`?date=${date}`, {
+                    method: 'DELETE'
+                });
+                
+                if (response.success) {
+                    updateDBStatus(true);
+                    return true;
+                } else {
+                    throw new Error(response.error || 'Failed to delete');
+                }
+            } catch (error) {
+                console.error('Error deleting schedule data:', error);
+                updateDBStatus(false);
+                throw error;
+            }
+        }
+
+        // Update database status indicator
+        function updateDBStatus(connected) {
+            const statusEl = document.getElementById('dbStatus');
+            if (connected) {
+                statusEl.innerHTML = '<span>🟢</span><span>Server connected - Changes saved globally</span>';
+                statusEl.classList.remove('error');
+            } else {
+                statusEl.innerHTML = '<span>🔴</span><span>Server error - Using local mode only</span>';
+                statusEl.classList.add('error');
+            }
+        }
+
+        // Format date as YYYY-MM-DD
+        function formatDate(date) {
+            return date.toISOString().split('T')[0];
+        }
+
+        // Format date for display
+        function formatDisplayDate(date) {
+            return date.toLocaleDateString('en-US', {
+                weekday: 'long',
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            });
+        }
+
+        // Format time for display
+        function formatTime(timeString) {
+            const [hours, minutes] = timeString.split(':');
+            const hour = parseInt(hours);
+            const ampm = hour >= 12 ? 'PM' : 'AM';
+            const displayHour = hour % 12 || 12;
+            return `${displayHour}:${minutes} ${ampm}`;
+        }
+
+        // Format time range for display
+        function formatTimeRange(timeStart, timeStop) {
+            return `${formatTime(timeStart)} - ${formatTime(timeStop)}`;
+        }
+
+        // Calculate duration in minutes
+        function calculateDuration(timeStart, timeStop) {
+            const start = new Date(`1970-01-01T${timeStart}:00`);
+            const stop = new Date(`1970-01-01T${timeStop}:00`);
+            const diffMs = stop - start;
+            const diffMins = Math.floor(diffMs / (1000 * 60));
+            
+            if (diffMins < 60) {
+                return `${diffMins}min`;
+            } else {
+                const hours = Math.floor(diffMins / 60);
+                const mins = diffMins % 60;
+                return mins > 0 ? `${hours}h ${mins}m` : `${hours}h`;
+            }
+        }
+
+        // Update current date display
+        function updateCurrentDateDisplay() {
+            document.getElementById('currentDate').textContent = formatDisplayDate(currentDate);
+        }
+
+        // Change date
+        function changeDate(days) {
+            currentDate.setDate(currentDate.getDate() + days);
+            updateCurrentDateDisplay();
+            renderSchedule();
+            updateStats();
+        }
+
+        // Go to today
+        function goToToday() {
+            currentDate = new Date();
+            updateCurrentDateDisplay();
+            renderSchedule();
+            updateStats();
+        }
+
+        // Render schedule for current date
+        function renderSchedule() {
+            const dateKey = formatDate(currentDate);
+            const events = scheduleData[dateKey] || [];
+            const scheduleGrid = document.getElementById('scheduleGrid');
+
+            if (events.length === 0) {
+                scheduleGrid.innerHTML = '<div class="no-events">No events scheduled for this day<br><small>Use the form to add new events</small></div>';
+                return;
+            }
+
+            // Sort events by start time
+            events.sort((a, b) => a.timeStart.localeCompare(b.timeStart));
+
+            let html = '';
+            events.forEach((event, index) => {
+                const duration = calculateDuration(event.timeStart, event.timeStop);
+                
+                html += `
+                    <div class="time-slot">
+                        <div class="time">
+                            <div class="time-range">${formatTimeRange(event.timeStart, event.timeStop)}</div>
+                            <div class="duration">${duration}</div>
+                        </div>
+                        <div class="event-info">
+                            <div class="event-title">${event.title}</div>
+                            ${event.description ? `<div class="event-description">${event.description}</div>` : ''}
+                        </div>
+                        <div class="event-actions">
+                            <button class="btn btn-secondary btn-small" onclick="editEvent(${index})">Edit</button>
+                            <button class="btn btn-danger btn-small" onclick="deleteEvent(${index})">Delete</button>
+                        </div>
+                    </div>
+                `;
+            });
+
+            scheduleGrid.innerHTML = html;
+        }
+
+        // Update statistics
+        function updateStats() {
+            const dateKey = formatDate(currentDate);
+            const todayEvents = scheduleData[dateKey] || [];
+            const totalDays = Object.keys(scheduleData).length;
+            const totalEvents = Object.values(scheduleData).reduce((sum, events) => sum + events.length, 0);
+
+            document.getElementById('eventCount').textContent = todayEvents.length;
+            document.getElementById('totalDays').textContent = totalDays;
+            document.getElementById('totalEvents').textContent = totalEvents;
+        }
+
+        // Show success message
+        function showSuccessMessage(message) {
+            const messageEl = document.getElementById('successMessage');
+            messageEl.textContent = message;
+            messageEl.style.display = 'block';
+            setTimeout(() => {
+                messageEl.style.display = 'none';
+            }, 3000);
+        }
+
+        // Add event template
+        function addTemplate(templateKey) {
+            const template = templates[templateKey];
+            if (template) {
+                document.getElementById('eventTitle').value = template.title;
+                document.getElementById('eventTimeStart').value = template.timeStart;
+                document.getElementById('eventTimeStop').value = template.timeStop;
+                document.getElementById('eventDescription').value = template.description;
+            }
+        }
+
+        // Edit event
+        function editEvent(index) {
+            const dateKey = formatDate(currentDate);
+            const event = scheduleData[dateKey][index];
+            
+            editingEventIndex = index;
+            document.getElementById('eventTitle').value = event.title;
+            document.getElementById('eventTimeStart').value = event.timeStart;
+            document.getElementById('eventTimeStop').value = event.timeStop;
+            document.getElementById('eventDescription').value = event.description || '';
+            
+            document.getElementById('submitBtn').textContent = 'Update Event';
+            document.getElementById('cancelBtn').style.display = 'inline-flex';
+        }
+
+        // Cancel edit
+        function cancelEdit() {
+            editingEventIndex = -1;
+            document.getElementById('eventForm').reset();
+            document.getElementById('submitBtn').textContent = 'Add Event';
+            document.getElementById('cancelBtn').style.display = 'none';
+        }
+
+        // Delete event
+        async function deleteEvent(index) {
+            if (confirm('Are you sure you want to delete this event?')) {
+                try {
+                    const dateKey = formatDate(currentDate);
+                    scheduleData[dateKey].splice(index, 1);
+                    
+                    if (scheduleData[dateKey].length === 0) {
+                        delete scheduleData[dateKey];
+                        await deleteScheduleData(dateKey);
+                    } else {
+                        await saveScheduleData(dateKey, scheduleData[dateKey]);
+                    }
+                    
+                    renderSchedule();
+                    updateStats();
+                    showSuccessMessage('Event deleted successfully!');
+                } catch (error) {
+                    console.error('Error deleting event:', error);
+                    alert('Error deleting event. Please try again.');
+                }
+            }
+        }
+
+        // Clear all events for current day
+        async function clearDay() {
+            if (confirm('Are you sure you want to clear all events for this day?')) {
+                try {
+                    const dateKey = formatDate(currentDate);
+                    delete scheduleData[dateKey];
+                    await deleteScheduleData(dateKey);
+                    
+                    renderSchedule();
+                    updateStats();
+                    showSuccessMessage('Day cleared successfully!');
+                } catch (error) {
+                    console.error('Error clearing day:', error);
+                    alert('Error clearing day. Please try again.');
+                }
+            }
+        }
+
+        // Export data to JSON
+        function exportData() {
+            const dataStr = JSON.stringify(scheduleData, null, 2);
+            const dataBlob = new Blob([dataStr], { type: 'application/json' });
+            
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(dataBlob);
+            link.download = `schedule_data_${new Date().toISOString().split('T')[0]}.json`;
+            link.click();
+            
+            showSuccessMessage('Data exported successfully!');
+        }
+
+        // Initialize with sample data if database is empty
+        async function loadSampleData() {
+            try {
+                await loadScheduleData();
+                
+                // Just load from server - no automatic sample data creation
+                // The server API will handle initial data if needed
+                
+                updateDBStatus(true);
+            } catch (error) {
+                console.error('Error loading sample data:', error);
+                updateDBStatus(false);
+                // Keep scheduleData empty if server fails
+                scheduleData = {};
+            }
+        }
+
+        // Authentication functions
+        function checkAuth() {
+            const sessionAuth = sessionStorage.getItem('scheduleAuth');
+            if (sessionAuth === 'authenticated') {
+                isAuthenticated = true;
+                showAdminPanel();
+            } else {
+                showLoginScreen();
+            }
+        }
+
+        function showLoginScreen() {
+            document.getElementById('loginContainer').style.display = 'flex';
+            document.getElementById('adminContainer').style.display = 'none';
+        }
+
+        function showAdminPanel() {
+            document.getElementById('loginContainer').style.display = 'none';
+            document.getElementById('adminContainer').style.display = 'block';
+            
+            // Initialize admin panel after showing it
+            setTimeout(() => {
+                if (Object.keys(scheduleData).length === 0) {
+                    initAdminPanel();
+                }
+            }, 100);
+        }
+
+        function logout() {
+            if (confirm('Are you sure you want to logout?')) {
+                isAuthenticated = false;
+                sessionStorage.removeItem('scheduleAuth');
+                sessionStorage.removeItem('scheduleUser');
+                
+                // Clear any timers
+                clearTimeout(inactivityTimer);
+                
+                // Reset to login screen
+                showLoginScreen();
+                
+                // Clear any form data
+                document.getElementById('loginForm').reset();
+                document.getElementById('eventForm').reset();
+                
+                // Show logout success message briefly
+                setTimeout(() => {
+                    const loginError = document.getElementById('loginError');
+                    loginError.style.background = '#d4edda';
+                    loginError.style.color = '#155724';
+                    loginError.style.borderColor = '#c3e6cb';
+                    loginError.textContent = 'Successfully logged out';
+                    loginError.style.display = 'block';
+                    
+                    setTimeout(() => {
+                        loginError.style.display = 'none';
+                        loginError.style.background = '#ffebee';
+                        loginError.style.color = '#c62828';
+                        loginError.style.borderColor = '#ffcdd2';
+                    }, 3000);
+                }, 100);
+            }
+        }
+
+        // Initialize admin panel (called after successful login)
+        async function initAdminPanel() {
+            try {
+                await loadSampleData();
+                updateCurrentDateDisplay();
+                renderSchedule();
+                updateStats();
+                updateDBStatus(true);
+            } catch (error) {
+                console.error('Error initializing app:', error);
+                updateDBStatus(false);
+                
+                // Fallback to memory-only mode
+                const today = formatDate(new Date());
+                scheduleData[today] = [
+                    { timeStart: '08:00', timeStop: '09:30', title: 'Welcome Breakfast', description: 'Continental breakfast in dining room' },
+                    { timeStart: '10:00', timeStop: '11:00', title: 'Morning Meeting', description: 'Daily coordination meeting' },
+                    { timeStart: '12:30', timeStop: '14:00', title: 'Lunch Service', description: 'Buffet lunch service' },
+                    { timeStart: '15:00', timeStop: '16:30', title: 'Team Activity', description: 'Outdoor team building' },
+                    { timeStart: '18:00', timeStop: '21:00', title: 'Dinner Service', description: 'Evening dinner service' }
+                ];
+                
+                updateCurrentDateDisplay();
+                renderSchedule();
+                updateStats();
+            }
+        }
+
+        // Handle login form submission
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const username = document.getElementById('username').value.trim();
+            const password = document.getElementById('password').value;
+            const errorEl = document.getElementById('loginError');
+            
+            // Validate credentials
+            if (AUTH_CREDENTIALS[username] && AUTH_CREDENTIALS[username] === password) {
+                // Successful login
+                isAuthenticated = true;
+                sessionStorage.setItem('scheduleAuth', 'authenticated');
+                sessionStorage.setItem('scheduleUser', username);
+                
+                // Clear form and error
+                document.getElementById('loginForm').reset();
+                errorEl.style.display = 'none';
+                
+                // Show admin panel
+                showAdminPanel();
+            } else {
+                // Failed login
+                errorEl.textContent = 'Invalid username or password. Please try again.';
+                errorEl.style.display = 'block';
+                
+                // Clear password field
+                document.getElementById('password').value = '';
+                
+                // Add shake animation
+                const loginCard = document.querySelector('.login-card');
+                loginCard.style.animation = 'shake 0.5s ease-in-out';
+                setTimeout(() => {
+                    loginCard.style.animation = 'slideIn 0.5s ease-out';
+                }, 500);
+            }
+        });
+
+        // Handle form submission
+        document.getElementById('eventForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            try {
+                const title = document.getElementById('eventTitle').value.trim();
+                const timeStart = document.getElementById('eventTimeStart').value;
+                const timeStop = document.getElementById('eventTimeStop').value;
+                const description = document.getElementById('eventDescription').value.trim();
+                
+                if (!title || !timeStart || !timeStop) {
+                    alert('Please fill in all required fields.');
+                    return;
+                }
+                
+                // Validate that start time is before stop time
+                if (timeStart >= timeStop) {
+                    alert('Start time must be before end time.');
+                    return;
+                }
+                
+                const dateKey = formatDate(currentDate);
+                
+                if (!scheduleData[dateKey]) {
+                    scheduleData[dateKey] = [];
+                }
+                
+                const eventData = { timeStart, timeStop, title, description };
+                
+                if (editingEventIndex >= 0) {
+                    scheduleData[dateKey][editingEventIndex] = eventData;
+                    showSuccessMessage('Event updated successfully!');
+                } else {
+                    scheduleData[dateKey].push(eventData);
+                    showSuccessMessage('Event added successfully!');
+                }
+                
+                // Save to server
+                await saveScheduleData(dateKey, scheduleData[dateKey]);
+                
+                cancelEdit();
+                renderSchedule();
+                updateStats();
+            } catch (error) {
+                console.error('Error saving event:', error);
+                alert('Error saving event. Please try again.');
+            }
+        });
+
+        // Auto-logout after 30 minutes of inactivity
+        let inactivityTimer;
+        
+        function resetInactivityTimer() {
+            clearTimeout(inactivityTimer);
+            if (isAuthenticated) {
+                inactivityTimer = setTimeout(() => {
+                    alert('Session expired due to inactivity. Please login again.');
+                    logout();
+                }, 30 * 60 * 1000); // 30 minutes
+            }
+        }
+
+        // Add event listeners for user activity
+        ['mousedown', 'mousemove', 'keypress', 'scroll', 'touchstart'].forEach(event => {
+            document.addEventListener(event, resetInactivityTimer, true);
+        });
+
+        // Initialize the app
+        function init() {
+            // Check authentication first
+            checkAuth();
+        }
+
+        // Initialize the app
+        init();
+    </script>
+</body>
+</html>
