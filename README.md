@@ -56,6 +56,7 @@ your-domain.com/
 ├── api.php
 ├── index.html          # Live Display (Viewer)
 ├── admin.html          # Admin Panel
+├── logo.png            # favicon
 └── schedule_data.json  # Data storage (auto-created)
 ```
 
@@ -304,11 +305,10 @@ This project is licensed under the MIT License.
 
 ## Author
 
-**PotatoCodex** - Initial work
+**Potato Codex** - Initial work at 13 July 2025
 
 ## Acknowledgments
 
-- LSKK (Laboratorium Sistem Kendali dan Kecerdasan Buatan)
 - Modern CSS techniques for beautiful UI
 - RESTful API design principles
 - Responsive web design best practices
@@ -323,4 +323,4 @@ If you have any questions or need support:
 
 ---
 
-Made with love by PotatoCodex © 2025
+Made with love by Potato Codex © 2025
